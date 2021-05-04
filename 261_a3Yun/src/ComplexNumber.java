@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 
 public class ComplexNumber {
     /**
@@ -107,29 +109,33 @@ public class ComplexNumber {
      * Add 2 complex numbers together in order to return a new complex number.
      * 
      * @author Yun Zhou
+     * @param currentNumber
+     *            current complex number
      * @param toAddNumber
      *            the complex number to be added
-     * @return
+     * @return the addition of 2 input complexNumber which is a new complexNumber
      */
-    public final ComplexNumber add(ComplexNumber toAddNumber) {
-        ComplexNumber currentNumber = this;// the object who calling this method is
-                                           // currentNumber
+    public static ComplexNumber add(ComplexNumber currentNumber, ComplexNumber toAddNumber) {
+        // ComplexNumber currentNumber = this;// the object who calling this method is
+        // currentNumber
         double n_real = currentNumber.getRe() + toAddNumber.getRe();
         double n_img = currentNumber.getIm() + toAddNumber.getIm();
         return new ComplexNumber(n_real, n_img);
     }
 
-    public final ComplexNumber subtract(ComplexNumber toSubtractComplexNumber) {
-        ComplexNumber currentNumber = this;// the object who calling this method is
-                                           // currentNumber
+    public static ComplexNumber subtract(ComplexNumber currentNumber,
+            ComplexNumber toSubtractComplexNumber) {
+        // the object who calling this method is currentNumber
+        // ComplexNumber currentNumber = this;
         double n_real = currentNumber.getRe() - toSubtractComplexNumber.getRe();
         double n_img = currentNumber.getIm() - toSubtractComplexNumber.getIm();
         return new ComplexNumber(n_real, n_img);
     }
 
-    public final ComplexNumber multiply(ComplexNumber toMultiplyComplexNumber) {
-        ComplexNumber currentNumber = this;// the object who calling this method is
-                                           // currentNumber
+    public static ComplexNumber multiply(ComplexNumber currentNumber,
+            ComplexNumber toMultiplyComplexNumber) {
+        // the object who calling this method is currentNumber
+        // ComplexNumber currentNumber = this;
 
         double a = currentNumber.getRe();
         double b = currentNumber.getIm();
@@ -141,10 +147,10 @@ public class ComplexNumber {
         return new ComplexNumber(n_real, n_img);
     }
 
-    public final ComplexNumber divide(ComplexNumber toDivideComplexNumber) {
-        ComplexNumber currentNumber = this;// the object who calling this method is
-                                           // currentNumber
-
+    public static ComplexNumber divide(ComplexNumber currentNumber,
+            ComplexNumber toDivideComplexNumber) {
+        // the object who calling this method is currentNumber
+        // ComplexNumber currentNumber = this;
         double a = currentNumber.getRe();
         double b = currentNumber.getIm();
         double c = toDivideComplexNumber.getRe();
@@ -164,16 +170,46 @@ public class ComplexNumber {
      * @return the new exponential <code>complexNumber</code> of the current
      *         <code>complexNumer</code> object.
      */
-    public final ComplexNumber exp() {
+    public static ComplexNumber exp(ComplexNumber number) {
 
-        ComplexNumber currentNumber = this;// the object who calling this method is
-                                           // currentNumber
+        // ComplexNumber currentNumber = this;// the object who calling this method is
+        // // currentNumber
 
-        double a = currentNumber.getRe();
-        double b = currentNumber.getIm();
+        double a = number.getRe();
+        double b = number.getIm();
 
         double n_real = Math.exp(a) * Math.cos(b);
         double n_img = Math.exp(a) * Math.sin(b);
         return new ComplexNumber(n_real, n_img);
+    }
+
+    /**
+     * Description: <br/>
+     * Method for converting <code>double</code> List to <code>ComplexNumber</code> List.
+     * 
+     * @author Yun Zhou
+     * @param doubleList
+     *            the list to be converted
+     * @return the complexNumber list
+     */
+    public static List<ComplexNumber> convertToComplexNumberList(List<Double> doubleList) {
+        List<ComplexNumber> toReturn = new ArrayList<ComplexNumber>();
+        for (Double double_number : doubleList) {
+            toReturn.add(new ComplexNumber(double_number, 0));
+        }
+        return toReturn;
+    }
+
+    /**
+     * Description: <br/>
+     * Convert the double number to the Complex number. (e.g. 20 = 20 + 0*i)
+     * 
+     * @author Yun Zhou
+     * @param number
+     *            number to be converted
+     * @return complexNumber object
+     */
+    public static ComplexNumber convertToComplexNumber(double number) {
+        return new ComplexNumber(number, 0);
     }
 }
