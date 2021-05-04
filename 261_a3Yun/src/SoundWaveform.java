@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-
+import java.util.Arrays;
 /*
   getAudioInputStream
   -> getframelength,
@@ -27,28 +27,31 @@ import java.util.ArrayList;
    -> write to file.
  */
 
-public class SoundWaveform {
+public class SoundWaveform implements UIMouseListener {
 
     public static final double MAX_VALUE = 300;
 
     public static final int SAMPLE_RATE = 44100;
 
-    public static final int MAX_SAMPLES = SAMPLE_RATE / 100; // samples in 1/100 sec
+    /** samples in 1/100 sec */
+    public static final int MAX_SAMPLES = SAMPLE_RATE / 100;
 
     public static final int GRAPH_LEFT = 10;
 
     public static final int ZERO_LINE = 310;
 
-    public static final int X_STEP = 2; // pixels between samples
+    /** pixels between samples */
+    public static final int X_STEP = 2;
 
     public static final int GRAPH_WIDTH = MAX_SAMPLES * X_STEP;
 
-    private ArrayList<Double> waveform = new ArrayList<Double>(); // the displayed waveform
+    /** the displayed waveform */
+    private ArrayList<Double> waveform = new ArrayList<Double>();
 
-    private ArrayList<ComplexNumber> spectrum = new ArrayList<ComplexNumber>(); // the
-                                                                                // spectrum:
-                                                                                // length/mod
-                                                                                // of each X(k)
+    /** the spectrum: length/mod of each X(k) */
+    private ArrayList<ComplexNumber> spectrum = new ArrayList<ComplexNumber>();
+
+    // private ArrayList<ComplexNumber> ;
 
     /**
      * Displays the waveform.
@@ -139,8 +142,34 @@ public class SoundWaveform {
         UI.clearText();
         UI.println("DFT in process, please wait...");
 
+        ArrayList<ComplexNumber> corrComplexList = ComplexNumber
+                .convertToComplexNumberList(waveform);
         // TODO
         // Add your code here: you should transform from the waveform to the spectrum
+
+        /*
+         * K: amplitude of the frequency K
+         */
+        for (int k = 0; k < this.waveform.size(); k++) {
+            ComplexNumber k_cNumber = new ComplexNumber();
+            for (int n = 0; n < this.waveform.size(); n++) {
+                // set up & assign the Maths value
+                double b = (n * k * 2 * Math.PI) / (this.waveform.size());// 2PI/N
+
+                double real = Math.cos(-b);
+                double img = Math.sin(-b);
+                // multply it do the calculation
+                ComplexNumber toBeAdded = ComplexNumber.multiply(
+                        corrComplexList.get(n),
+                        new ComplexNumber(real, img));
+
+                // increment the value of the complexNumber
+                k_cNumber = ComplexNumber.add(k_cNumber, toBeAdded);
+            }
+
+            // add into list
+            this.spectrum.add(k_cNumber);
+        }
 
         UI.println("DFT completed!");
         waveform.clear();
@@ -162,11 +191,64 @@ public class SoundWaveform {
         UI.clearText();
         UI.println("FFT in process, please wait...");
 
-        // TODO
+        // TODO,write some piece of code
         // Add your code here: you should transform from the waveform to the spectrum
+        double[] temp = new double[this.waveform.size()];
+        for (int i = 0; i < temp.length; i++) {
+            temp[i] = waveform.get(i);
+        }
+        FFTHelper(temp);
 
         UI.println("FFT completed!");
         waveform.clear();
+    }
+
+    /**
+     * The input is an array of double, and the output is an array of complex numbers.
+     *
+     * @author Yun Zhou
+     */
+    public ComplexNumber[] FFTHelper(double[] transoformList) {
+        if (transoformList == null || transoformList.length % 2 != 0) {
+            throw new NullPointerException("It's null, you haven't load the file yet");
+        }
+        int N = transoformList.length;
+        if (N == 1) {
+            // can not divide only 1 instance into 2 half, so just return the complexNumber
+            // version of this number ( x= x + 0*i)
+            return new ComplexNumber[] { new ComplexNumber(transoformList[0], 0) };
+        }
+
+        ComplexNumber[] W = new ComplexNumber[N];
+        for (int k = 0; k < N; k++) {
+            W[k] = ComplexNumber.exp(new ComplexNumber(0, -2 * Math.PI * k / N));
+        }
+
+        double[] xeven = new double[N / 2];
+        double[] xodd = new double[N / 2];
+        for (int k = 0; k < N / 2; k++) {
+            xeven[k] = transoformList[k * 2];
+            xodd[k] = transoformList[k * 2 + 1];
+        }
+
+        ComplexNumber[] Xeven = FFTHelper(xeven);
+        ComplexNumber[] Xodd = FFTHelper(xodd);
+        ComplexNumber[] X = new ComplexNumber[N];
+
+        // since the period is periodic , so each corresponding value is match, use d&c to
+        // assign and calculate X from Xeven, Xodd and W[k]
+        for (int k = 0; k < N / 2 - 1; k++) {
+            // Xeven(k)+Xodd(K)*W(K,N)
+            ComplexNumber W_K_N = ComplexNumber.exp(new ComplexNumber(0, (-2 * Math.PI * k) / 8));
+            // Xeven(k)+Xodd(K)*W(K+N/2,N)
+            ComplexNumber W_KN2_N = ComplexNumber
+                    .exp(new ComplexNumber(0, (-2 * Math.PI * (N / 2 + k)) / 8));
+
+            X[k] = ComplexNumber.add(Xeven[k], ComplexNumber.multiply(Xodd[k], W_K_N));
+            X[k + N / 2] = ComplexNumber.add(Xeven[k], ComplexNumber.multiply(Xodd[k], W_KN2_N));
+        }
+
+        return X;
     }
 
     public void ifft() {
@@ -202,11 +284,6 @@ public class SoundWaveform {
         UI.println("Loading completed!");
     }
 
-    UIMouseListener doMouse(String a, double d1, double d2) {
-
-        return null;
-    }
-
     public static void main(String[] args) {
         SoundWaveform wfm = new SoundWaveform();
         // core
@@ -219,7 +296,56 @@ public class SoundWaveform {
         UI.addButton("Save", wfm::doSave);
         UI.addButton("Load", wfm::doLoad);
         UI.addButton("Quit", UI::quit);
-        UI.setMouseMotionListener(wfm::doMouse);
+        UI.setMouseMotionListener(wfm::doMouse);// at next method
         UI.setWindowSize(950, 630);
+    }
+
+    public UIMouseListener doMouse(String action, double x, double y) {
+
+        return null;
+    }
+
+    @Override
+    public void mousePerformed(String action, double x, double y) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * Get the waveform.
+     *
+     * @return the waveform
+     */
+    public ArrayList<Double> getWaveform() {
+        return waveform;
+    }
+
+    /**
+     * Get the spectrum.
+     *
+     * @return the spectrum
+     */
+    public ArrayList<ComplexNumber> getSpectrum() {
+        return spectrum;
+    }
+
+    /**
+     * Set the waveform.
+     *
+     * @param waveform
+     *            the waveform to set
+     */
+    public void setWaveform(ArrayList<Double> waveform) {
+        this.waveform = waveform;
+    }
+
+    /**
+     * Set the spectrum.
+     *
+     * @param spectrum
+     *            the spectrum to set
+     */
+    public void setSpectrum(ArrayList<ComplexNumber> spectrum) {
+        this.spectrum = spectrum;
     }
 }

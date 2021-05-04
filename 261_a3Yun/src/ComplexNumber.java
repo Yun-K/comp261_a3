@@ -116,26 +116,31 @@ public class ComplexNumber {
      * @return the addition of 2 input complexNumber which is a new complexNumber
      */
     public static ComplexNumber add(ComplexNumber currentNumber, ComplexNumber toAddNumber) {
-        // ComplexNumber currentNumber = this;// the object who calling this method is
-        // currentNumber
-        double n_real = currentNumber.getRe() + toAddNumber.getRe();
-        double n_img = currentNumber.getIm() + toAddNumber.getIm();
+        double a = currentNumber.getRe();
+        double b = currentNumber.getIm();
+        double c = toAddNumber.getRe();
+        double d = toAddNumber.getIm();
+
+        double n_real = a + c;
+        double n_img = b + d;
+        // assert n_real != 0;
         return new ComplexNumber(n_real, n_img);
     }
 
     public static ComplexNumber subtract(ComplexNumber currentNumber,
             ComplexNumber toSubtractComplexNumber) {
-        // the object who calling this method is currentNumber
-        // ComplexNumber currentNumber = this;
-        double n_real = currentNumber.getRe() - toSubtractComplexNumber.getRe();
-        double n_img = currentNumber.getIm() - toSubtractComplexNumber.getIm();
+        double a = currentNumber.getRe();
+        double b = currentNumber.getIm();
+        double c = toSubtractComplexNumber.getRe();
+        double d = toSubtractComplexNumber.getIm();
+
+        double n_real = a - c;
+        double n_img = b - d;
         return new ComplexNumber(n_real, n_img);
     }
 
     public static ComplexNumber multiply(ComplexNumber currentNumber,
             ComplexNumber toMultiplyComplexNumber) {
-        // the object who calling this method is currentNumber
-        // ComplexNumber currentNumber = this;
 
         double a = currentNumber.getRe();
         double b = currentNumber.getIm();
@@ -149,8 +154,6 @@ public class ComplexNumber {
 
     public static ComplexNumber divide(ComplexNumber currentNumber,
             ComplexNumber toDivideComplexNumber) {
-        // the object who calling this method is currentNumber
-        // ComplexNumber currentNumber = this;
         double a = currentNumber.getRe();
         double b = currentNumber.getIm();
         double c = toDivideComplexNumber.getRe();
@@ -167,13 +170,12 @@ public class ComplexNumber {
      * <code>complexNumer</code> object.
      * 
      * @author Yun Zhou
+     * @param number
+     *            to be calculate
      * @return the new exponential <code>complexNumber</code> of the current
      *         <code>complexNumer</code> object.
      */
     public static ComplexNumber exp(ComplexNumber number) {
-
-        // ComplexNumber currentNumber = this;// the object who calling this method is
-        // // currentNumber
 
         double a = number.getRe();
         double b = number.getIm();
@@ -192,8 +194,8 @@ public class ComplexNumber {
      *            the list to be converted
      * @return the complexNumber list
      */
-    public static List<ComplexNumber> convertToComplexNumberList(List<Double> doubleList) {
-        List<ComplexNumber> toReturn = new ArrayList<ComplexNumber>();
+    public static ArrayList<ComplexNumber> convertToComplexNumberList(List<Double> doubleList) {
+        ArrayList<ComplexNumber> toReturn = new ArrayList<ComplexNumber>();
         for (Double double_number : doubleList) {
             toReturn.add(new ComplexNumber(double_number, 0));
         }
