@@ -138,7 +138,7 @@ public class SoundWaveform implements UIMouseListener {
         UI.println("Printing completed!");
     }
 
-    public void dft() {
+    public void dft() {//
         UI.clearText();
         UI.println("DFT in process, please wait...");
 
