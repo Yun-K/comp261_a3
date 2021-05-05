@@ -142,33 +142,38 @@ public class SoundWaveform implements UIMouseListener {
         UI.clearText();
         UI.println("DFT in process, please wait...");
 
-        ArrayList<ComplexNumber> corrComplexList = ComplexNumber
-                .convertToComplexNumberList(waveform);
         // TODO
         // Add your code here: you should transform from the waveform to the spectrum
 
+        System.out.println("Clean up and Initialize spectrum list first\nDo the algorthim...");
+        UI.println("Clean up and Initialize spectrum list first\nDo the algorthim...");
+        this.spectrum = new ArrayList<ComplexNumber>();// clean up
+
+        ArrayList<ComplexNumber> waveform_ComplexList = ComplexNumber
+                .convertToComplexNumberList(waveform);// easy for assigning variable
         /*
          * K: amplitude of the frequency K
          */
         for (int k = 0; k < this.waveform.size(); k++) {
-            ComplexNumber k_cNumber = new ComplexNumber();
+            ComplexNumber weightedSum_cNumber = new ComplexNumber();
             for (int n = 0; n < this.waveform.size(); n++) {
                 // set up & assign the Maths value
-                double b = (n * k * 2 * Math.PI) / (this.waveform.size());// 2PI/N
+                double b = (n * k * 2 * Math.PI) / (this.waveform.size());// k*n*2PI/N
 
                 double real = Math.cos(-b);
                 double img = Math.sin(-b);
                 // multply it do the calculation
                 ComplexNumber toBeAdded = ComplexNumber.multiply(
-                        corrComplexList.get(n),
+                        waveform_ComplexList.get(n),
                         new ComplexNumber(real, img));
 
                 // increment the value of the complexNumber
-                k_cNumber = ComplexNumber.add(k_cNumber, toBeAdded);
+                weightedSum_cNumber = ComplexNumber.add(weightedSum_cNumber,
+                        toBeAdded);
             }
 
             // add into list
-            this.spectrum.add(k_cNumber);
+            this.spectrum.add(weightedSum_cNumber);
         }
 
         UI.println("DFT completed!");
@@ -179,8 +184,39 @@ public class SoundWaveform implements UIMouseListener {
         UI.clearText();
         UI.println("IDFT in process, please wait...");
 
+        if (this.spectrum == null || this.spectrum.isEmpty()) {
+            UI.println("Please do dft first");
+            return;
+        }
+
+        System.out.println("Clean up and Initialize waveform list\nDo the algorthim...");
+        UI.println("Clean up and Initialize waveform list\nDo the algorthim...");
+        this.waveform = new ArrayList<Double>();// clean up
         // TODO
         // Add your code here: you should transform from the spectrum to the waveform
+
+        // implement code
+        for (int n = 0; n < this.spectrum.size(); n++) {
+            // double value = 0;
+            ComplexNumber weightedSum = new ComplexNumber();
+            for (int k = 0; k < this.spectrum.size(); k++) {
+                // set up & assign the Maths value
+                double b = (n * k * 2 * Math.PI) / (this.spectrum.size());// k*n*2PI/N
+                double real = Math.cos(b);
+                double img = Math.sin(b);
+
+                // multply it do the calculation
+                ComplexNumber toBeAdded = ComplexNumber.multiply(
+                        this.spectrum.get(k),
+                        new ComplexNumber(real, img));
+                weightedSum = ComplexNumber.add(weightedSum, toBeAdded);
+
+            }
+            double value = weightedSum.getRe();
+            value /= this.spectrum.size();
+
+            waveform.add(value);
+        }
 
         UI.println("IDFT completed!");
 
@@ -191,13 +227,25 @@ public class SoundWaveform implements UIMouseListener {
         UI.clearText();
         UI.println("FFT in process, please wait...");
 
+        System.out.println("Clean up and Initialize spectrum list first\nDo the algorthim...");
+        UI.println("Clean up and Initialize spectrum list first\nDo the algorthim...");
+        this.spectrum = new ArrayList<ComplexNumber>();// clean up
+
         // TODO,write some piece of code
         // Add your code here: you should transform from the waveform to the spectrum
-        double[] temp = new double[this.waveform.size()];
-        for (int i = 0; i < temp.length; i++) {
+        int size = this.waveform.size();
+        if (size % 2 != 0) {// cut the tail
+            size -= 1;
+        }
+        double[] temp = new double[size];
+        for (int i = 0; i < size; i++) {
             temp[i] = waveform.get(i);
         }
-        FFTHelper(temp);
+        ComplexNumber[] ans = FFTHelper(temp);// do the recursion
+
+        for (ComplexNumber complexNumber : ans) {// assign to the spectrum ArrayList
+            this.spectrum.add(complexNumber);
+        }
 
         UI.println("FFT completed!");
         waveform.clear();
@@ -209,19 +257,20 @@ public class SoundWaveform implements UIMouseListener {
      * @author Yun Zhou
      */
     public ComplexNumber[] FFTHelper(double[] transoformList) {
-        if (transoformList == null || transoformList.length % 2 != 0) {
+        if (transoformList == null) {
             throw new NullPointerException("It's null, you haven't load the file yet");
         }
         int N = transoformList.length;
         if (N == 1) {
             // can not divide only 1 instance into 2 half, so just return the complexNumber
             // version of this number ( x= x + 0*i)
-            return new ComplexNumber[] { new ComplexNumber(transoformList[0], 0) };
+            return new ComplexNumber[] { ComplexNumber.convertToComplexNumber(transoformList[0]) };
         }
 
         ComplexNumber[] W = new ComplexNumber[N];
         for (int k = 0; k < N; k++) {
-            W[k] = ComplexNumber.exp(new ComplexNumber(0, -2 * Math.PI * k / N));
+            // double real =
+            // W[k] =
         }
 
         double[] xeven = new double[N / 2];
@@ -255,6 +304,9 @@ public class SoundWaveform implements UIMouseListener {
         UI.clearText();
         UI.println("IFFT in process, please wait...");
 
+        System.out.println("Clean up and Initialize waveform list\nDo the algorthim...");
+        UI.println("Clean up and Initialize waveform list\nDo the algorthim...");
+        this.waveform = new ArrayList<Double>();// clean up
         // TODO
         // Add your code here: you should transform from the spectrum to the waveform
 

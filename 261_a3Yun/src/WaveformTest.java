@@ -10,21 +10,24 @@ public class WaveformTest {
 
     @Test
     public void test_case1() throws Exception {
-        ArrayList<Double> waveform = new ArrayList<Double>();
+        ArrayList<Double> waveForm = new ArrayList<Double>();
         double i = 1.0;
-        while (i < 10) {
-            if (i == 9)
-                break;
-            waveform.add(i);
-            i += 1.0;
+        while (i < 9) {
+            waveForm.add(i++);
         }
 
         SoundWaveform sound = new SoundWaveform();
-        sound.setWaveform(waveform);
+        sound.setWaveform(waveForm);
         sound.dft();
 
         for (ComplexNumber cm : sound.getSpectrum()) {
             System.out.println(cm.toString());
+        }
+        System.out.println("=========================================");
+
+        sound.idft();
+        for (Double double1 : sound.getWaveform()) {
+            System.out.println(double1);
         }
 
         // ArrayList<ComplexNumber> spectrum = new ArrayList<ComplexNumber>() ;
@@ -36,6 +39,32 @@ public class WaveformTest {
         // -3.999999999999999 -1.656854249492381i,
         // -3.999999999999998 -4.000000000000001i,
         // -3.999999999999995 -9.65685424949238i;
+
+    }
+
+    @Test
+    public void test_demo() throws Exception {
+        System.out.println("================DEMO=========================");
+        ArrayList<Double> waveForm = new ArrayList<Double>();
+        waveForm.add(1.0);
+        waveForm.add(1.0);
+        waveForm.add(0.0);
+        waveForm.add(0.0);
+        SoundWaveform sound = new SoundWaveform();
+        sound.setWaveform(waveForm);
+        sound.dft();
+
+        for (ComplexNumber cm : sound.getSpectrum()) {
+            System.out.println(cm.toString());
+        }
+        System.out.println("=========================================");
+
+        sound.idft();
+        for (Double double1 : sound.getWaveform()) {
+            System.out.println(double1);
+        }
+
+        System.out.println("=============Demo end============================");
 
     }
 
