@@ -51,6 +51,7 @@ public class ComplexNumber {
      * @return the real part of the complex number
      */
     public double getRe() {
+        // return Double.valueOf(String.format("%.2f", this.real));
         return this.real;
     }
 
@@ -60,6 +61,7 @@ public class ComplexNumber {
      * @return the imaginary part of the complex number
      */
     public double getIm() {
+        // return Double.valueOf(String.format("%.2f", this.imaginary));
         return this.imaginary;
     }
 
@@ -79,10 +81,11 @@ public class ComplexNumber {
     public String toString() {
         String re = this.getRe() + "";
         String im = "";
-        if (this.getIm() < 0)
-            im = this.getIm() + "i";
-        else
-            im = "+" + this.getIm() + "i";
+        if (this.getIm() < 0) {
+            im = String.format("%.2f", this.getIm()) + "i";
+        } else {
+            im = "+" + String.format("%.2f", this.getIm()) + "i";
+        }
         return re + im;
     }
 
