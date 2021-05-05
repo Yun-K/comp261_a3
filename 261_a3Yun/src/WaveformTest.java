@@ -10,12 +10,13 @@ public class WaveformTest {
 
     @Test
     public void test_case1() throws Exception {
+
+        System.out.println("\n=============Testing DFT============================");
         ArrayList<Double> waveForm = new ArrayList<Double>();
         double i = 1.0;
-        while (i < 9) {
+        while (i <= 8) {
             waveForm.add(i++);
         }
-
         SoundWaveform sound = new SoundWaveform();
         sound.setWaveform(waveForm);
         sound.dft();
@@ -23,12 +24,14 @@ public class WaveformTest {
         for (ComplexNumber cm : sound.getSpectrum()) {
             System.out.println(cm.toString());
         }
-        System.out.println("=========================================");
+        System.out.println("============finish DFT=============================\n");
 
+        System.out.println("\n============Testing IDFT=============================");
         sound.idft();
         for (Double double1 : sound.getWaveform()) {
             System.out.println(double1);
         }
+        System.out.println("============finish IDFT=============================\n");
 
         // ArrayList<ComplexNumber> spectrum = new ArrayList<ComplexNumber>() ;
         // 36.0+0.0i,
@@ -43,28 +46,33 @@ public class WaveformTest {
     }
 
     @Test
-    public void test_demo() throws Exception {
-        System.out.println("================DEMO=========================");
+    public void test_FFT() throws Exception {
+        System.out.println("\n=============Testing FFT============================");
         ArrayList<Double> waveForm = new ArrayList<Double>();
-        waveForm.add(1.0);
-        waveForm.add(1.0);
-        waveForm.add(0.0);
-        waveForm.add(0.0);
+        double i = 1.0;
+        while (i <= 8) {
+            waveForm.add(i++);
+        }
         SoundWaveform sound = new SoundWaveform();
         sound.setWaveform(waveForm);
-        sound.dft();
+        sound.fft();
 
         for (ComplexNumber cm : sound.getSpectrum()) {
             System.out.println(cm.toString());
         }
-        System.out.println("=========================================");
+        System.out.println("============finish FFT=============================\n");
 
-        sound.idft();
-        for (Double double1 : sound.getWaveform()) {
-            System.out.println(double1);
-        }
+        // System.out.println("\n============Testing IDFT=============================");
+        // sound.idft();
+        // for (Double double1 : sound.getWaveform()) {
+        // System.out.println(double1);
+        // }
+        // System.out.println("============finish IDFT=============================\n");
 
-        System.out.println("=============Demo end============================");
+    }
+
+    @Test
+    public void test_case2() throws Exception {
 
     }
 
