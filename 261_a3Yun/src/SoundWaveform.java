@@ -348,14 +348,6 @@ public class SoundWaveform implements UIMouseListener {
 
         long start = System.currentTimeMillis();
 
-        // check if need to cut the tail
-        if (this.spectrum.size() % 2 != 0) {
-            if (this.spectrum.size() != 1) {
-                // cut the last tail to make sure it is some power of 2
-                this.spectrum.remove(spectrum.size() - 1);
-            }
-        }
-
         // do recursion and assign to the spectrum ArrayList
         ArrayList<ComplexNumber> temp = IFFTHelper(new ArrayList<ComplexNumber>(this.spectrum));
 
@@ -499,7 +491,6 @@ public class SoundWaveform implements UIMouseListener {
 
     @Override
     public void mousePerformed(String action, double x, double y) {
-        // TODO Auto-generated method stub
 
     }
 

@@ -13,7 +13,7 @@ public class WaveformTest {
 
     @Test
     public void test_case1_whole() throws Exception {
-        // test_case1_dft_idft();
+        test_case1_dft_idft();
         test_case1_fft_ifft();
         SOUND.printDiff();
         System.out.println("------------------case 1 end=============================\n");
