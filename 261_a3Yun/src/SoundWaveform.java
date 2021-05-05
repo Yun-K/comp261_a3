@@ -1,9 +1,9 @@
 
 // DO NOT DISTRIBUTE THIS FILE TO STUDENTS
 import ecs100.UI;
+import ecs100.UIButtonListener;
 import ecs100.UIFileChooser;
 import ecs100.UIMouseListener;
-import jdk.nashorn.api.tree.ForInLoopTree;
 
 import javax.sound.sampled.*;
 import java.awt.*;
@@ -52,7 +52,8 @@ public class SoundWaveform implements UIMouseListener {
     /** the spectrum: length/mod of each X(k) */
     private ArrayList<ComplexNumber> spectrum = new ArrayList<ComplexNumber>();
 
-    // private ArrayList<ComplexNumber> ;
+    /* represent the runing time */
+    public static long IDFT_running_time, IFFT_runing_time, DFT_running_time, FFT_running_time;
 
     /**
      * Displays the waveform.
@@ -142,13 +143,13 @@ public class SoundWaveform implements UIMouseListener {
     public void dft() {//
         UI.clearText();
         UI.println("DFT in process, please wait...");
-
-        // TODO
-        // Add your code here: you should transform from the waveform to the spectrum
-
         System.out.println("Clean up and Initialize spectrum list first\nDo the algorthim...");
         UI.println("Clean up and Initialize spectrum list first\nDo the algorthim...");
         this.spectrum = new ArrayList<ComplexNumber>();// clean up
+
+        // TODO
+        // Add your code here: you should transform from the waveform to the spectrum
+        long start = System.currentTimeMillis();
 
         ArrayList<ComplexNumber> waveform_ComplexList = ComplexNumber
                 .convertToComplexNumberList(waveform);// easy for assigning variable
@@ -176,6 +177,10 @@ public class SoundWaveform implements UIMouseListener {
             this.spectrum.add(weightedSum_cNumber);
         }
 
+        long end = System.currentTimeMillis();
+
+        this.DFT_running_time = end - start;
+
         UI.println("DFT completed!");
         waveform.clear();
     }
@@ -194,6 +199,7 @@ public class SoundWaveform implements UIMouseListener {
         this.waveform = new ArrayList<Double>();// clean up
         // TODO
         // Add your code here: you should transform from the spectrum to the waveform
+        long start = System.currentTimeMillis();
 
         // implement code
         for (int n = 0; n < this.spectrum.size(); n++) {
@@ -219,11 +225,15 @@ public class SoundWaveform implements UIMouseListener {
         }
 
         UI.println("IDFT completed!");
+        long end = System
+                .currentTimeMillis();
+
+        this.IDFT_running_time = end - start;
 
         spectrum.clear();
     }
 
-    public void fft() {
+    public void fft() {// double to ComplexNumber
         UI.clearText();
         UI.println("FFT in process, please wait...");
 
@@ -234,11 +244,13 @@ public class SoundWaveform implements UIMouseListener {
         // TODO,write some piece of code
         // Add your code here: you should transform from the waveform to the spectrum
 
+        long start = System.currentTimeMillis();
+
         // Convert waveform to complexNumber list first
         ArrayList<ComplexNumber> waveform_ComplexList = ComplexNumber
                 .convertToComplexNumberList(waveform);
 
-        // // check if need to cut the tail
+        // check if need to cut the tail
         if (waveform_ComplexList.size() % 2 != 0) {
             if (waveform_ComplexList.size() != 1) {
                 // cut the last tail to make sure it is some power of 2
@@ -249,6 +261,9 @@ public class SoundWaveform implements UIMouseListener {
         // do recursion and assign to the spectrum ArrayList
         this.spectrum = FFTHelper(waveform_ComplexList);// do the recursion
 
+        long end = System.currentTimeMillis();
+
+        this.FFT_running_time = end - start;
         UI.println("FFT completed!");
         waveform.clear();
     }
@@ -315,7 +330,7 @@ public class SoundWaveform implements UIMouseListener {
         return X;
     }
 
-    public void ifft() {
+    public void ifft() {// ComplexNumber To Double
         UI.clearText();
         UI.println("IFFT in process, please wait...");
 
@@ -325,9 +340,34 @@ public class SoundWaveform implements UIMouseListener {
         // TODO
         // Add your code here: you should transform from the spectrum to the waveform
 
+        long start = System.currentTimeMillis();
+
+        // check if need to cut the tail
+        if (this.spectrum.size() % 2 != 0) {
+            if (this.spectrum.size() != 1) {
+                // cut the last tail to make sure it is some power of 2
+                this.spectrum.remove(spectrum.size() - 1);
+            }
+        }
+
+        // do recursion and assign to the spectrum ArrayList
+        ArrayList<ComplexNumber> temp = IFFTHelper(new ArrayList<ComplexNumber>(this.spectrum));
+
+        // add it into the waveform list
+        for (ComplexNumber complexNumber : temp) {
+            this.waveform.add(complexNumber.getRe());
+        }
+
         UI.println("IFFT completed!");
 
+        long end = System.currentTimeMillis();
+        IFFT_runing_time = end - start;
         spectrum.clear();
+    }
+
+    private ArrayList<ComplexNumber> IFFTHelper(ArrayList<ComplexNumber> spectArrayList) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     /**
@@ -363,6 +403,27 @@ public class SoundWaveform implements UIMouseListener {
         UI.addButton("Save", wfm::doSave);
         UI.addButton("Load", wfm::doLoad);
         UI.addButton("Quit", UI::quit);
+
+        UI.addButton("Print Time", () -> {
+            UI.println("Below are the running time:");
+            UI.println("IDFT: " + IDFT_running_time);
+            UI.println("DFT: " + DFT_running_time);
+            UI.println("FFT: " + FFT_running_time);
+            UI.println("DFT: " + DFT_running_time);
+            long fft_diff = FFT_running_time - DFT_running_time;
+            UI.println("The time difference between FFT and DFT: " + fft_diff);
+            long inverse_diff = IFFT_runing_time - IDFT_running_time;
+            UI.println("The time difference between IFFT and IDFT : " + inverse_diff);
+
+            System.out.println("Below are the running time:");
+            System.out.println("IDFT: " + IDFT_running_time);
+            System.out.println("DFT: " + DFT_running_time);
+            System.out.println("FFT: " + FFT_running_time);
+            System.out.println("DFT: " + DFT_running_time);
+            System.out.println("The time difference between FFT and DFT: " + fft_diff);
+            System.out.println("The time difference between IFFT and IDFT : " + inverse_diff);
+        });
+
         UI.setMouseMotionListener(wfm::doMouse);// at next method
         UI.setWindowSize(950, 630);
     }
@@ -376,6 +437,28 @@ public class SoundWaveform implements UIMouseListener {
     public void mousePerformed(String action, double x, double y) {
         // TODO Auto-generated method stub
 
+    }
+
+    public void printDiff() {
+        // () -> {
+        UI.println("Below are the running time:");
+        UI.println("IDFT: " + IDFT_running_time);
+        UI.println("DFT: " + DFT_running_time);
+        UI.println("FFT: " + FFT_running_time);
+        UI.println("DFT: " + DFT_running_time);
+        long fft_diff = FFT_running_time - DFT_running_time;
+        UI.println("The time difference between FFT and DFT: " + fft_diff);
+        long inverse_diff = IFFT_runing_time - IDFT_running_time;
+        UI.println("The time difference between IFFT and IDFT : " + inverse_diff);
+
+        System.out.println("Below are the running time:");
+        System.out.println("IDFT: " + IDFT_running_time);
+        System.out.println("DFT: " + DFT_running_time);
+        System.out.println("FFT: " + FFT_running_time);
+        System.out.println("DFT: " + DFT_running_time);
+        System.out.println("The time difference between FFT and DFT: " + fft_diff);
+        System.out.println("The time difference between IFFT and IDFT : " + inverse_diff);
+        // }
     }
 
     /**

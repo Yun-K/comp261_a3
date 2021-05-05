@@ -7,12 +7,13 @@ import java.util.List;
 import org.junit.Test;
 
 public class WaveformTest {
+    ArrayList<Double> waveForm;
 
     @Test
     public void test_case1() throws Exception {
         System.out.println("------------------case 1 start=============================\n");
         System.out.println("\n=============Testing FFT============================");
-        ArrayList<Double> waveForm = new ArrayList<Double>();
+        waveForm = new ArrayList<Double>();
         double i = 1.0;
         while (i <= 8) {
             waveForm.add(i++);
@@ -30,7 +31,6 @@ public class WaveformTest {
         waveForm = new ArrayList<Double>();
         double i1 = 1.0;
         while (i1 <= 8) {
-
             waveForm.add(i1++);
         }
         sound = new SoundWaveform();
