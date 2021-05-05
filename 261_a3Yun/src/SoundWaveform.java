@@ -366,8 +366,61 @@ public class SoundWaveform implements UIMouseListener {
     }
 
     private ArrayList<ComplexNumber> IFFTHelper(ArrayList<ComplexNumber> spectArrayList) {
-        // TODO Auto-generated method stub
-        return null;
+        if (spectArrayList == null) {
+            throw new NullPointerException("It's null, you haven't load the file yet");
+        }
+        int N = spectArrayList.size();
+        if (N == 1) {
+            // can not divide only 1 instance into 2 half, so just return it
+            return spectArrayList;
+        }
+        ArrayList<ComplexNumber> xeven = new ArrayList<ComplexNumber>();
+        ArrayList<ComplexNumber> xodd = new ArrayList<ComplexNumber>();
+        for (int i = 0; i < N / 2; i++) {
+            xeven.add(null);
+            xodd.add(null);
+        }
+
+        for (int k = 0; k < N / 2; k++) {
+            xeven.set(k, spectArrayList.get(k * 2));
+            xodd.set(k, spectArrayList.get(1 + k * 2));
+        }
+
+        // do the recursion DFS
+        ArrayList<ComplexNumber> Xeven = FFTHelper(xeven);
+        ArrayList<ComplexNumber> Xodd = FFTHelper(xodd);
+
+        // initiallize arrayList X
+        ArrayList<ComplexNumber> X = new ArrayList<ComplexNumber>();
+        for (int i = 0; i < N; i++) {
+            X.add(new ComplexNumber());
+        }
+
+        // since the period is periodic , so each corresponding value is match, use d&c to
+        // assign and calculate X from Xeven, Xodd and W[k]
+        for (int k = 0; k < N / 2; k++) {
+            // set up & assign the Maths value
+            double img = (k * 2 * Math.PI) / N;// (2PI*k)/N
+            double img1 = ((k + N / 2) * 2 * Math.PI) / N;// (2PI*(k+N/2))/N
+            // Xeven(k)+Xodd(K)*W(K,N)
+            ComplexNumber W_K_N = ComplexNumber.exp(new ComplexNumber(0, img));
+            // Xeven(k)+Xodd(K)*W(K+N/2,N)
+            ComplexNumber W_KN2_N = ComplexNumber.exp(new ComplexNumber(0, img1));
+            // assert W_KN2_N.getIm() != 0;
+            ComplexNumber or1 = ComplexNumber.add(Xeven.get(k),
+                    ComplexNumber.multiply(Xodd.get(k), W_K_N));
+
+            X.set(k, ComplexNumber.divide(or1, ComplexNumber.convertToComplexNumber(N)));
+
+            int nextPeriodIndex = k + N / 2;
+            ComplexNumber or2 = ComplexNumber.add(Xeven.get(k),
+                    ComplexNumber.multiply(Xodd.get(k), W_KN2_N));
+            X.set(nextPeriodIndex,
+                    ComplexNumber.divide(or2, ComplexNumber.convertToComplexNumber(N)));
+
+        }
+
+        return X;
     }
 
     /**
