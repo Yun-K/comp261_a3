@@ -77,12 +77,12 @@ public class ComplexNumber {
      */
     @Override
     public String toString() {
-        String re = this.real + "";
+        String re = this.getRe() + "";
         String im = "";
-        if (this.imaginary < 0)
-            im = this.imaginary + "i";
+        if (this.getIm() < 0)
+            im = this.getIm() + "i";
         else
-            im = "+" + this.imaginary + "i";
+            im = "+" + this.getIm() + "i";
         return re + im;
     }
 
