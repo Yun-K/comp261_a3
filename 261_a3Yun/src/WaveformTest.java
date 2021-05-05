@@ -12,35 +12,31 @@ public class WaveformTest {
     SoundWaveform SOUND = new SoundWaveform();
 
     @Test
-    public void test_case1_fft_ifft() throws Exception {
-        System.out.println("------------------case 1 start=============================\n");
-        System.out.println("\n=============Testing FFT============================");
-        waveForm = new ArrayList<Double>();
-        double i = 1.0;
-        while (i <= 8) {
-            waveForm.add(i++);
-        }
-        SOUND.setWaveform(waveForm);
-        SOUND.fft();
-
-        for (ComplexNumber cm : SOUND.getSpectrum()) {
-            System.out.println(cm.toString());
-        }
-        System.out.println("============finish FFT=============================\n");
-        System.out.println("\n============Testing IFFT=============================");
-        SOUND.ifft();
-        for (Double double1 : SOUND.getWaveform()) {
-            System.out.println(double1);
-        }
-        System.out.println("============finish IFFT=============================\n");
-
+    public void test_case1_whole() throws Exception {
+        // test_case1_dft_idft();
+        test_case1_fft_ifft();
+        SOUND.printDiff();
         System.out.println("------------------case 1 end=============================\n");
-
     }
 
     @Test
+    public void test_case2_whole() throws Exception {
+        test_case2_dft_idft();
+        test_case2_fft_ifft();
+        SOUND.printDiff();
+        System.out.println("------------------case 2 end=============================\n");
+    }
+
+    @Test
+    public void test_case3_whole() throws Exception {
+        test_case3_dft_idft();
+        test_case3_fft_ifft();
+        SOUND.printDiff();
+        System.out.println("------------------case 3 end=============================\n");
+    }
+
     public void test_case1_dft_idft() throws Exception {
-        System.out.println("\n=============Testing DFT============================");
+        System.out.println("\n=============Testing case1 DFT============================");
         waveForm = new ArrayList<Double>();
         double i1 = 1.0;
         while (i1 <= 8) {
@@ -52,22 +48,43 @@ public class WaveformTest {
         for (ComplexNumber cm : SOUND.getSpectrum()) {
             System.out.println(cm.toString());
         }
-        System.out.println("============finish DFT=============================\n");
+        System.out.println("============finish case1 DFT=============================\n");
 
-        System.out.println("\n============Testing IDFT=============================");
+        System.out.println("\n============Testing case1 IDFT=============================");
         SOUND.idft();
         for (Double double1 : SOUND.getWaveform()) {
             System.out.println(double1);
         }
-        System.out.println("============finish IDFT=============================\n");
+        System.out.println("============finish case1 IDFT=============================\n");
 
     }
 
-    @Test
-    public void test_case2_fft_ifft() throws Exception {
-        System.out.println("------------------case 2 start=============================\n");
+    public void test_case1_fft_ifft() throws Exception {
+        System.out.println("\n=============Testing case1 FFT============================");
+        waveForm = new ArrayList<Double>();
+        double i = 1.0;
+        while (i <= 8) {
+            waveForm.add(i++);
+        }
+        SOUND.setWaveform(waveForm);
+        SOUND.fft();
 
-        System.out.println("\n=============Testing FFT============================");
+        for (ComplexNumber cm : SOUND.getSpectrum()) {
+            System.out.println(cm.toString());
+        }
+        System.out.println("============finish case1 FFT=============================\n");
+        System.out.println("\n============Testing case1 IFFT=============================");
+        SOUND.ifft();
+        for (Double double1 : SOUND.getWaveform()) {
+            System.out.println(double1);
+        }
+        System.out.println("============finish case1 IFFT=============================\n");
+
+    }
+
+    public void test_case2_fft_ifft() throws Exception {
+
+        System.out.println("\n=============Testing case2 FFT============================");
         waveForm = new ArrayList<Double>();
         waveForm.add(1.0);
         waveForm.add(2.0);
@@ -83,17 +100,15 @@ public class WaveformTest {
         for (ComplexNumber cm : SOUND.getSpectrum()) {
             System.out.println(cm.toString());
         }
-        System.out.println("============finish FFT=============================\n");
-        System.out.println("\n============Testing IFFT=============================");
+        System.out.println("============finish case2 FFT=============================\n");
+        System.out.println("\n============Testing case2 IFFT=============================");
         SOUND.ifft();
         for (Double double1 : SOUND.getWaveform()) {
             System.out.println(double1);
         }
-        System.out.println("============finish IFFT=============================\n");
-        System.out.println("------------------case 2 end=============================\n");
+        System.out.println("============finish case2 IFFT=============================\n");
     }
 
-    @Test
     public void test_case2_dft_idft() throws Exception {
         System.out.println("\n=============Testing case 2 DFT============================");
         waveForm = new ArrayList<Double>();
@@ -122,7 +137,6 @@ public class WaveformTest {
 
     }
 
-    @Test
     public void test_case3_dft_idft() throws Exception {
         System.out.println("\n=============Testing case 3 DFT============================");
         waveForm = new ArrayList<Double>();
@@ -150,6 +164,34 @@ public class WaveformTest {
         System.out.println("============finish case3 IDFT=============================\n");
 
     }
+
+    public void test_case3_fft_ifft() throws Exception {
+        System.out.println("\n=============Testing case 3 FFT============================");
+        waveForm = new ArrayList<Double>();
+        waveForm.add(1.0);
+        waveForm.add(2.0);
+        waveForm.add(3.0);
+        waveForm.add(4.0);
+        waveForm.add(4.0);
+        waveForm.add(3.0);
+        waveForm.add(2.0);
+        waveForm.add(1.0);
+        SOUND.setWaveform(new ArrayList<Double>(waveForm));
+        SOUND.fft();
+        for (ComplexNumber cm : SOUND.getSpectrum()) {
+            System.out.println(cm.toString());
+        }
+        System.out.println("============finish case3 FFT=============================\n");
+
+        System.out.println("\n============Testing case3 IFFT=============================");
+        SOUND.ifft();
+        for (Double double1 : SOUND.getWaveform()) {
+            System.out.println(double1);
+        }
+        System.out.println("============finish case3 IFFT=============================\n");
+
+    }
+
     // Case 3:
     // Input waveform = [1,2,3,4,4,3,2,1]
     // Output spectrum = [

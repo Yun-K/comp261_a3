@@ -1,2 +1,64 @@
-I implement the stage 1
+I implement the stage 1, 2 and 3.
+
+It can succfeesully do the FFT/DFT and then display the spectrum graph, vice versa.
+For IDFT/IFFT, it will restore to the waveform List from the
+ obtained Complex number list, and the waveform graph will be drawn
+ if click on the GUI button.
+ In my case, I just ignore the imagnary part.
+
+
+Test:
+For debugging, 3 test cases which are from Dr Yi Mei are used.
+I construct a WaveformTest JUnit test class to test my application 
+through these 3 test cases. 
+Also, I use the provided graph which is on the handout to test.
+From the graph, I can know whether my corresponding algorthim is 
+correct or not. Through tests, I can see that my graph is correct,
+which proves that my algorthim is correct.
+
+For bugs, there are some rounding errors, also, a little bit weird. After FFT(), it can successfully 
+draw the spectrum graph, then do IFFT() the waveform graph is incorrect.
+However, do FFT() and IFFT() again, the waveform graph will be 
+the origional one, which is correct, pretty weird.
+
+
+For the time taken, in my laptop, for the Brass.wav:(it's the 
+result before I implement the method of cut the tail.)
+
+IDFT: 598327
+DFT: 548988
+FFT: 340
+IFFT: 193
+The time difference between FFT and DFT: -548648
+The time difference between IFFT and IDFT : -598134
+
+It is in milli-second, obviously, fft/ifft is much more faster 
+than dft/idft.
+By looking at the result and other materials, I can know that:
+The Time complexity for IDFT/IFFT is O(N^2), 
+but for FFT/DFT, the Time complexity is only O(N*logN), much more
+faster. FFT/DFT use the way of divide and conquer, in our case, 
+it utilize the periodic feature of the sinusoids(i.e. sine/cosine functions). 
+Which means, for each period, values are exactly the same, so just 
+assign the corresponding values which makes the algorthim much 
+more faster.
+Unlike the origional dft/idft, it just force calculate the 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
