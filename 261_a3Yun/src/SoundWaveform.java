@@ -153,14 +153,22 @@ public class SoundWaveform implements UIMouseListener {
 
         ArrayList<ComplexNumber> waveform_ComplexList = ComplexNumber
                 .convertToComplexNumberList(waveform);// easy for assigning variable
+        // check if need to cut the tail
+        int toMinus = how_far_away_isPowerOf2(waveform_ComplexList);
+        if (toMinus > 0) {// bigger than 0 means need to cut the tail
+            for (int i = 0; i < toMinus; i++) {
+                waveform_ComplexList.remove(waveform_ComplexList.size() - 1);
+            }
+        }
+
         /*
          * K: amplitude of the frequency K
          */
-        for (int k = 0; k < this.waveform.size(); k++) {
+        for (int k = 0; k < waveform_ComplexList.size(); k++) {
             ComplexNumber weightedSum_cNumber = new ComplexNumber();
-            for (int n = 0; n < this.waveform.size(); n++) {
+            for (int n = 0; n < waveform_ComplexList.size(); n++) {
                 // set up & assign the Maths value
-                double b = (n * k * 2 * Math.PI) / (this.waveform.size());// (k*n*2PI)/N
+                double b = (n * k * 2 * Math.PI) / (waveform_ComplexList.size());// (k*n*2PI)/N
                 double real = Math.cos(-b);
                 double img = Math.sin(-b);
                 // multply it do the calculation
@@ -246,14 +254,12 @@ public class SoundWaveform implements UIMouseListener {
 
         long start = System.currentTimeMillis();
 
-        // Convert waveform to complexNumber list first
         ArrayList<ComplexNumber> waveform_ComplexList = ComplexNumber
-                .convertToComplexNumberList(waveform);
-
+                .convertToComplexNumberList(waveform);// easy for assigning variable
         // check if need to cut the tail
-        if (waveform_ComplexList.size() % 2 != 0) {
-            if (waveform_ComplexList.size() != 1) {
-                // cut the last tail to make sure it is some power of 2
+        int toMinus = how_far_away_isPowerOf2(waveform_ComplexList);
+        if (toMinus > 0) {// bigger than 0 means need to cut the tail
+            for (int i = 0; i < toMinus; i++) {
                 waveform_ComplexList.remove(waveform_ComplexList.size() - 1);
             }
         }
@@ -263,7 +269,7 @@ public class SoundWaveform implements UIMouseListener {
 
         long end = System.currentTimeMillis();
 
-        this.FFT_running_time = end - start;
+        FFT_running_time = end - start;
         UI.println("FFT completed!");
         waveform.clear();
     }
@@ -310,8 +316,8 @@ public class SoundWaveform implements UIMouseListener {
         // assign and calculate X from Xeven, Xodd and W[k]
         for (int k = 0; k < N / 2; k++) {
             // set up & assign the Maths value
-            double img = -(k * 2 * Math.PI) / N;// (2PI*k)/N
-            double img1 = -((k + N / 2) * 2 * Math.PI) / N;// (2PI*(k+N/2))/N
+            double img = -1 * (k * 2 * Math.PI) / N;// (2PI*k)/N
+            double img1 = -1 * ((k + N / 2) * 2 * Math.PI) / N;// (2PI*(k+N/2))/N
             // Xeven(k)+Xodd(K)*W(K,N)
             ComplexNumber W_K_N = ComplexNumber.exp(new ComplexNumber(0, img));
             // Xeven(k)+Xodd(K)*W(K+N/2,N)
@@ -462,7 +468,7 @@ public class SoundWaveform implements UIMouseListener {
             UI.println("IDFT: " + IDFT_running_time);
             UI.println("DFT: " + DFT_running_time);
             UI.println("FFT: " + FFT_running_time);
-            UI.println("DFT: " + DFT_running_time);
+            UI.println("IFFT: " + IFFT_runing_time);
             long fft_diff = FFT_running_time - DFT_running_time;
             UI.println("The time difference between FFT and DFT: " + fft_diff);
             long inverse_diff = IFFT_runing_time - IDFT_running_time;
@@ -472,7 +478,7 @@ public class SoundWaveform implements UIMouseListener {
             System.out.println("IDFT: " + IDFT_running_time);
             System.out.println("DFT: " + DFT_running_time);
             System.out.println("FFT: " + FFT_running_time);
-            System.out.println("DFT: " + DFT_running_time);
+            System.out.println("IFFT: " + IFFT_runing_time);
             System.out.println("The time difference between FFT and DFT: " + fft_diff);
             System.out.println("The time difference between IFFT and IDFT : " + inverse_diff);
         });
@@ -481,6 +487,11 @@ public class SoundWaveform implements UIMouseListener {
         UI.setWindowSize(950, 630);
     }
 
+    /**
+     * Respond to mouse actions. The value of action may be "pressed", "released", "clicked",
+     * "doubleclicked", "moved", or "dragged". x and y are the coordinates of where the mouse
+     * action happened.
+     */
     public UIMouseListener doMouse(String action, double x, double y) {
 
         return null;
@@ -498,7 +509,7 @@ public class SoundWaveform implements UIMouseListener {
         UI.println("IDFT: " + IDFT_running_time);
         UI.println("DFT: " + DFT_running_time);
         UI.println("FFT: " + FFT_running_time);
-        UI.println("DFT: " + DFT_running_time);
+        UI.println("IFFT: " + IFFT_runing_time);
         long fft_diff = FFT_running_time - DFT_running_time;
         UI.println("The time difference between FFT and DFT: " + fft_diff);
         long inverse_diff = IFFT_runing_time - IDFT_running_time;
@@ -508,10 +519,45 @@ public class SoundWaveform implements UIMouseListener {
         System.out.println("IDFT: " + IDFT_running_time);
         System.out.println("DFT: " + DFT_running_time);
         System.out.println("FFT: " + FFT_running_time);
-        System.out.println("DFT: " + DFT_running_time);
+        System.out.println("IFFT: " + IFFT_runing_time);
         System.out.println("The time difference between FFT and DFT: " + fft_diff);
         System.out.println("The time difference between IFFT and IDFT : " + inverse_diff);
         // }
+    }
+
+    /**
+     * Description: <br/>
+     * This method will find how many number should the list to be subtracted to make the size
+     * of the list to be some power of 2.
+     * <p>
+     * e.g. size==10, it will return 2 since 10 need to minus 2 to be 8 since 8 is the pow of
+     * 2.
+     * <p>
+     * size==4, it will return 0, which means 4 is already the pow of 2.
+     * 
+     * @author Yun Zhou
+     * @param list
+     * @return
+     */
+    public int how_far_away_isPowerOf2(ArrayList list) {
+        int toMinus = Integer.MAX_VALUE;
+        for (int i = 1; i <= list.size() / 2; i++) {
+            int pow2 = (int) Math.pow(2, i);
+            if (pow2 == list.size()) {
+                return 0;
+            }
+            int diff = list.size() - pow2;
+            // diff can not be less that 0
+            if (diff < toMinus && diff > 0) {
+                toMinus = diff;
+            }
+        }
+        // the original size of the waveform should be smaller than the size after the cut
+        // times 2.
+        assert 0 <= toMinus && toMinus < list.size();// double check
+        assert list.size() < (list.size() - toMinus) * 2;
+        return toMinus;
+
     }
 
     /**

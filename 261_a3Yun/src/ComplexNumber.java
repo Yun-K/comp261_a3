@@ -82,9 +82,11 @@ public class ComplexNumber {
         String re = this.getRe() + "";
         String im = "";
         if (this.getIm() < 0) {
-            im = String.format("%.2f", this.getIm()) + "i";
+            // im = String.format("%.2f", this.getIm()) + "i";
+            im = this.getIm() + "i";
         } else {
-            im = "+" + String.format("%.2f", this.getIm()) + "i";
+            // im = "+" + String.format("%.2f", this.getIm()) + "i";
+            im = "+" + this.getIm() + "i";
         }
         return re + im;
     }
