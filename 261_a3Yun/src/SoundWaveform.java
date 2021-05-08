@@ -1,5 +1,6 @@
 
 // DO NOT DISTRIBUTE THIS FILE TO STUDENTS
+import ecs100.Ecs100MouseEvent;
 import ecs100.UI;
 import ecs100.UIButtonListener;
 import ecs100.UIFileChooser;
@@ -28,7 +29,16 @@ import java.util.Arrays;
    -> write to file.
  */
 
-public class SoundWaveform implements UIMouseListener {
+public class SoundWaveform implements UIMouseListener {// extends Ecs100MouseEvent
+
+    // public SoundWaveform(UIMouseListener c, String a, double x, double y) {
+    // super(c, a, x, y);
+    // // TODO Auto-generated constructor stub
+    // }
+    //
+    // public SoundWaveform() {
+    // this(c, a, x, y)
+    // }
 
     public static final double MAX_VALUE = 300;
 
@@ -479,18 +489,61 @@ public class SoundWaveform implements UIMouseListener {
         UI.setWindowSize(950, 630);
     }
 
+    String[] ACTION = new String[] { "pressed", "released", "clicked", "doubleclicked", "moved",
+            "dragged" };
+
     /**
      * Respond to mouse actions. The value of action may be "pressed", "released", "clicked",
      * "doubleclicked", "moved", or "dragged". x and y are the coordinates of where the mouse
      * action happened.
      */
     public UIMouseListener doMouse(String action, double x, double y) {
+        // System.out.println(action);
+        if (action.equals(ACTION[0])) {
+            System.out.println(x + "\t" + y);
+            UI.println(x + "\t" + y);
+            double correctX = x - GRAPH_LEFT;
+            double correctY = ZERO_LINE - y;
 
+            UI.println("CorreXY:" + correctX + "\t" + correctY);
+            mousePerformed(action, correctX, correctY);
+        }
         return null;
     }
 
     @Override
-    public void mousePerformed(String action, double x, double y) {
+    public void mousePerformed(String action, double correctX, double correctY) {
+        if (correctX < 0 || spectrum.isEmpty() || spectrum == null) {
+            return;
+        }
+
+        StringBuffer sb = new StringBuffer("ss");
+        int index = -1;
+        int toBeUpdatedIndex = -1;
+        for (ComplexNumber complexNumber : spectrum) {
+            index++;
+            // if (complexNumber.getRe() == correctX) {
+            if (index == correctX) {
+                toBeUpdatedIndex = index;
+
+                sb.append("You select index :").append(index).append(" from the spectrum.\n");
+                sb.append("It has the frequency: ").append(complexNumber.getRe())
+                        .append(" which correspond to x-axis\nAnd the origional Magnitude correspond to this is: ");
+                sb.append(complexNumber.getIm());
+                sb.append("\nThe new Magnitude is ").append(correctY)
+                        .append("\nwhich is the location you selected");
+
+            }
+        }
+        ComplexNumber complexNumber2 = new ComplexNumber(correctX, correctY);
+        if (toBeUpdatedIndex > 0) {
+            this.spectrum.set(toBeUpdatedIndex, complexNumber2);
+            UI.clearGraphics();
+            this.displaySpectrum();
+        }
+
+        UI.println(sb.toString());
+        System.out.println(sb.toString());
 
     }
 

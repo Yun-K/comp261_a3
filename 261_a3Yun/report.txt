@@ -1,4 +1,5 @@
 I implement the stage 1, 2 and 3.
+and a little bit stage 4.
 
 It can succfeesully do the FFT/DFT and then display the spectrum graph, vice versa.
 For IDFT/IFFT, it will restore to the waveform List from the
